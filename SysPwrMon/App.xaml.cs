@@ -1,10 +1,14 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
+using System.IO;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using SysPwrMon.Native;
 using SysPwrMon.Services;
+using WinRT.Interop;
 
 namespace SysPwrMon
 {
@@ -41,6 +45,15 @@ namespace SysPwrMon
         {
             _window = new MainWindow();
             _window.Activate();
+
+            // Unpackaged: the running taskbar/title-bar icon is NOT taken from
+            // the .exe file icon (ApplicationIcon) nor Package.appxmanifest
+            // (ignored with MSIX tooling off) — Windows shows the default. Set
+            // it on the HWND instead. Same .ico the .exe uses, so the running
+            // app matches its file icon.
+            WindowIcon.SetWindowIcon(
+                WindowNative.GetWindowHandle(_window),
+                Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico"));
         }
 
         /// <summary>
