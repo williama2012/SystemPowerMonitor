@@ -1,8 +1,10 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using SysPwrMon.Pages;
 using SysPwrMon.Services;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 
@@ -21,6 +23,14 @@ namespace SysPwrMon
             // the Show/Exit menu. H.NotifyIcon's ContextFlyout builds a Win32
             // PopupMenu from the MenuFlyout and invokes each item's Command —
             // so the items carry RelayCommand, not Click handlers.
+            //
+            // Icon is set from an absolute path (not the XAML string): this app is
+            // unpackaged, so the string form is resolved by H.NotifyIcon's own
+            // converter against an uncertain base; an explicit BitmapImage from
+            // AppContext.BaseDirectory is the same .ico the window icon uses and
+            // can't dangle.
+            TrayIcon.IconSource = new BitmapImage(
+                new Uri(Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico")));
             TrayIcon.LeftClickCommand = new RelayCommand(RestoreFromTray);
             TrayShowItem.Command = new RelayCommand(RestoreFromTray);
             TrayExitItem.Command = new RelayCommand(ExitFromTray);

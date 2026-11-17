@@ -65,7 +65,6 @@
         <tb:TaskbarIcon
             x:Name="TrayIcon"
             ToolTipText="SysPwrMon"
-            IconSource="Assets/AppIcon.ico"
             NoLeftClickDelay="True">
             <tb:TaskbarIcon.ContextFlyout>
                 <MenuFlyout>
