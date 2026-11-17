@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SysPwrMon (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "SysPwrMon (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
