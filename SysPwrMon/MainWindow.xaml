@@ -7,7 +7,7 @@
     xmlns:local="using:SysPwrMon"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tb="using:H.NotifyIcon"
-    Title="SysPwrMon"
+    Title="System Power Monitor"
     mc:Ignorable="d">
     <Window.SystemBackdrop>
         <MicaBackdrop />
@@ -21,7 +21,7 @@
 
         <TitleBar
             x:Name="AppTitleBar"
-            Title="SysPwrMon"
+            Title="System Power Monitor"
             BackRequested="TitleBar_BackRequested"
             IsBackButtonVisible="{x:Bind NavFrame.CanGoBack, Mode=OneWay}"
             IsPaneToggleButtonVisible="True"
