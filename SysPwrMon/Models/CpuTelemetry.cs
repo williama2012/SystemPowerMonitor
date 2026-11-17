@@ -11,7 +11,12 @@ namespace SysPwrMon.Models;
 /// showing a stale value, never a torn one.
 public sealed class CpuTelemetry : INotifyPropertyChanged
 {
-    public string Name { get; set; } = string.Empty;
+    private string _name = string.Empty;
+    public string Name
+    {
+        get => _name;
+        set { _name = value; OnPropertyChanged(); }
+    }
 
     private double? _load;
     public double? Load
