@@ -76,22 +76,43 @@ public sealed partial class HomePage : Page
     // UI-thread only: every assignment here may raise PropertyChanged.
     private void ApplySample(TelemetrySample sample)
     {
-        _cpu.Name = sample.CpuName;
-        _cpu.Load = sample.CpuLoad;
-        _cpu.Power = sample.CpuPower;
-        for (int i = 0; i < _gpus.Length; i++)
+        try
         {
-            var gpu = _gpus[i];
-            var data = sample.Gpus[i];
-            gpu.CoreLoad = data.CoreLoad;
-            gpu.CorePower = data.CorePower;
-            gpu.VramUsedMiB = data.VramUsedMiB;
-            gpu.VramFreeMiB = data.VramFreeMiB;
-            gpu.VramMaxMiB = data.VramMaxMiB;
-            gpu.VramLoad = data.VramLoad;
+            _cpu.Name = sample.CpuName;
+            _cpu.Load = sample.CpuLoad;
+            _cpu.Power = sample.CpuPower;
+            for (int i = 0; i < _gpus.Length; i++)
+            {
+                var gpu = _gpus[i];
+                var data = sample.Gpus[i];
+                gpu.CoreLoad = data.CoreLoad;
+                gpu.CorePower = data.CorePower;
+                gpu.VramUsedMiB = data.VramUsedMiB;
+                gpu.VramFreeMiB = data.VramFreeMiB;
+                gpu.VramMaxMiB = data.VramMaxMiB;
+                gpu.VramLoad = data.VramLoad;
+            }
+            StatusTextBlock.Text = string.IsNullOrEmpty(_telemetry.LastError)
+                ? _telemetry.Status
+                : $"{_telemetry.Status} — {_telemetry.LastError}";
+
         }
-        StatusTextBlock.Text = string.IsNullOrEmpty(_telemetry.LastError)
-            ? _telemetry.Status
-            : $"{_telemetry.Status} — {_telemetry.LastError}";
+        catch (Exception ex)
+        {
+            // Defensive: the service should never raise a sample with a
+            // different GPU count than the first sample, but if it does, the
+            // page is in an inconsistent state. Log and show the error.\
+            try
+            {
+                //TODO: Log the error to system logs.
+                StatusTextBlock.Text = $"Telemetry sample mismatch: {ex.Message}";
+
+            }
+            catch (Exception)
+            {
+                // Defensive: the StatusTextBlock may be null if the page is
+                // not fully initialized yet, or the XAML surface is gone.
+            }
+        }
     }
 }
