@@ -70,7 +70,7 @@ public sealed partial class HomePage : Page
         var queue = _dispatcherQueue;
         if (queue is null)
             return; // first tick before the page attached — nothing to draw.
-        queue.TryRunAsync(DispatcherQueuePriority.Normal, () => ApplySample(sample));
+        queue.TryEnqueue(DispatcherQueuePriority.Normal, () => ApplySample(sample));
     }
 
     // UI-thread only: every assignment here may raise PropertyChanged.
