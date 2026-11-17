@@ -3,17 +3,163 @@
     x:Class="SysPwrMon.Pages.HomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:SysPwrMon.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:SysPwrMon.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="24,16,24,16" RowSpacing="24">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Home" />
-        <TextBlock Grid.Row="1" Text="This is the Home page" />
-    </Grid>
+    <Page.Resources>
+        <converters:PercentValueConverter x:Key="PercentValueConverter" />
+        <converters:WattValueConverter x:Key="WattValueConverter" />
+        <converters:MebibyteValueConverter x:Key="MebibyteValueConverter" />
+    </Page.Resources>
+
+    <ScrollViewer Padding="24,16,24,16">
+        <StackPanel Spacing="16">
+
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="System Power" />
+
+            <!-- Logging toggle + one-line status. The checkbox state is
+                 owned by TelemetryService; the handler only forwards it. -->
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <CheckBox
+                    x:Name="LoggingCheckBox"
+                    VerticalAlignment="Center"
+                    Checked="LoggingCheckBox_Checked"
+                    Content="Log to MongoDB"
+                    Unchecked="LoggingCheckBox_Unchecked" />
+                <TextBlock
+                    x:Name="StatusTextBlock"
+                    Text=""
+                    VerticalAlignment="Center" />
+            </StackPanel>
+
+            <!-- CPU: DataContext bound to the stable CpuTelemetry; the
+                 timer thread mutates it, bindings pick up the values. -->
+            <Border x:Name="CpuCard" Padding="16">
+                <Grid ColumnSpacing="16" RowSpacing="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.ColumnSpan="2"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="{Binding Name}" />
+                    <TextBlock
+                        Grid.Row="1"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="Load" />
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="{Binding Load, Converter={StaticResource PercentValueConverter}}" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="Power" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="{Binding Power, Converter={StaticResource WattValueConverter}}" />
+                </Grid>
+            </Border>
+
+            <!-- One card per GPU; the items are the stable GpuTelemetry
+                 objects, so in-place updates flow through every binding. -->
+            <ItemsControl x:Name="GpuItemsControl">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Padding="16"
+                            Margin="0,0,0,16">
+                            <Grid ColumnSpacing="16" RowSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Grid.ColumnSpan="4"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{Binding Name}" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Core Load" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{Binding CoreLoad, Converter={StaticResource PercentValueConverter}}" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="2"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Core Power" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="3"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{Binding CorePower, Converter={StaticResource WattValueConverter}}" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="VRAM Used" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{Binding VramUsedMiB, Converter={StaticResource MebibyteValueConverter}}" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="2"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="VRAM Free" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="3"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{Binding VramFreeMiB, Converter={StaticResource MebibyteValueConverter}}" />
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="VRAM Load" />
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{Binding VramLoad, Converter={StaticResource PercentValueConverter}}" />
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="2"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="VRAM Max" />
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="3"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{Binding VramMaxMiB, Converter={StaticResource MebibyteValueConverter}}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
 </Page>

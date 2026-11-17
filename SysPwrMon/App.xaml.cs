@@ -4,27 +4,34 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using SysPwrMon.Services;
 
 namespace SysPwrMon
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
+    /// This is the composition root: the only place the service graph is built.
     /// </summary>
     public partial class App : Application
     {
         private Window? _window;
 
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        public App()
-        {
-            InitializeComponent();
-        }
+        // One instance for the process: created on first touch, so the
+        // pages resolve it without a DI container (and the hardware opens
+        // exactly once per app run).
+        private TelemetryService? _telemetry;
+        private ISettingsStore? _settingsStore;
+
+        // Created here (not in Telemetry) so the page and the service
+        // share one store instance — same path either way, but one object
+        // is cheaper to reason about.
+        public ISettingsStore SettingsStore => _settingsStore ??= new RegistrySettingsStore();
+
+        public TelemetryService Telemetry
+            => _telemetry ??= new TelemetryService(
+                new LibreHardwareMonitorSource(),
+                new MongoPowerSink(),
+                SettingsStore);
 
         /// <summary>
         /// Invoked when the application is launched.
@@ -35,5 +42,12 @@ namespace SysPwrMon
             _window = new MainWindow();
             _window.Activate();
         }
+
+        /// <summary>
+        /// Window minimize/maximize changes the UI policy, not the data
+        /// path — sampling and logging continue (the requirement).
+        /// </summary>
+        public void SetUiSuspended(bool suspended)
+            => Telemetry.IsUiSuspended = suspended;
     }
 }
