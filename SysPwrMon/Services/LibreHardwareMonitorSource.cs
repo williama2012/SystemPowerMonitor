@@ -151,7 +151,7 @@ public sealed class LibreHardwareMonitorSource : ITelemetrySource
 
             double? corePower = null;
             if (Nvml.nvmlDeviceGetPowerUsage(handle, out var watts) == Nvml.Success)
-                corePower = watts;
+                corePower = watts / 1000;
 
             gpus[i] = new GpuSampleData(cardName, coreLoad, corePower, vramUsed, vramFree, vramMax, vramLoad);
         }
