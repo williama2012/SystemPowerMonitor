@@ -14,6 +14,7 @@ public sealed class RegistrySettingsStore : ISettingsStore
     private const string UriValueName = "MongoUri";
     private const string DatabaseValueName = "DatabaseName";
     private const string CollectionValueName = "CollectionName";
+    private const string MinimizeToTrayValueName = "MinimizeToTray";
 
     public AppSettings Load()
     {
@@ -25,7 +26,8 @@ public sealed class RegistrySettingsStore : ISettingsStore
             : new AppSettings(
                 Read(key, UriValueName),
                 Read(key, DatabaseValueName),
-                Read(key, CollectionValueName));
+                Read(key, CollectionValueName),
+                ReadBool(key, MinimizeToTrayValueName));
     }
 
     public void Save(AppSettings settings)
@@ -34,6 +36,7 @@ public sealed class RegistrySettingsStore : ISettingsStore
         Write(key, UriValueName, settings.MongoUri);
         Write(key, DatabaseValueName, settings.DatabaseName);
         Write(key, CollectionValueName, settings.CollectionName);
+        WriteBool(key, MinimizeToTrayValueName, settings.MinimizeToTray);
     }
 
     private static string? Read(RegistryKey key, string name)
@@ -45,5 +48,19 @@ public sealed class RegistrySettingsStore : ISettingsStore
             key.DeleteValue(name, throwOnMissingValue: false);
         else
             key.SetValue(name, value);
+    }
+
+    // The minimize-to-tray toggle is a bool, stored as a DWORD (1/0).
+    // Absent == off: mirrors the string pattern (absent value = default),
+    // so a key the user never set reads "off", not a fabricated "on".
+    private static bool ReadBool(RegistryKey key, string name)
+        => key.GetValue(name) is int value && value != 0;
+
+    private static void WriteBool(RegistryKey key, string name, bool value)
+    {
+        if (value)
+            key.SetValue(name, 1, RegistryValueKind.DWord);
+        else
+            key.DeleteValue(name, throwOnMissingValue: false);
     }
 }

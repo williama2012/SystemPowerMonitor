@@ -32,6 +32,7 @@ public sealed partial class SettingsPage : Page
         MongoUriTextBox.Text = settings.MongoUri;
         DatabaseNameTextBox.Text = settings.DatabaseName;
         CollectionNameTextBox.Text = settings.CollectionName;
+        MinimizeToTrayCheckBox.IsChecked = settings.MinimizeToTray;
         SaveStatusTextBlock.Text = string.Empty;
     }
 
@@ -40,7 +41,8 @@ public sealed partial class SettingsPage : Page
         var settings = new AppSettings(
             MongoUriTextBox.Text.Trim(),
             DatabaseNameTextBox.Text.Trim(),
-            CollectionNameTextBox.Text.Trim());
+            CollectionNameTextBox.Text.Trim(),
+            MinimizeToTrayCheckBox.IsChecked == true);
 
         if (!settings.IsComplete)
         {

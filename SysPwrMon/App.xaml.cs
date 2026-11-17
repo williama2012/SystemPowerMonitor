@@ -38,6 +38,13 @@ namespace SysPwrMon
                 SettingsStore);
 
         /// <summary>
+        /// Whether minimize tucks the window into the system tray. Read from
+        /// the store (not cached) so the window reflects a live toggle: the
+        /// behavior is decided at each minimize, and a registry read is cheap.
+        /// </summary>
+        public bool MinimizeToTrayEnabled => SettingsStore.Load().MinimizeToTray;
+
+        /// <summary>
         /// Invoked when the application is launched.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>

@@ -71,6 +71,7 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="*" />
     <PackageReference Include="MongoDB.Bson" Version="3.14.0" />
     <PackageReference Include="MongoDB.Driver" Version="3.14.0" />
+    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.4.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\AppIcon.ico">

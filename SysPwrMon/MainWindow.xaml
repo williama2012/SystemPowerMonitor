@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SysPwrMon"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tb="using:H.NotifyIcon"
     Title="SysPwrMon"
     mc:Ignorable="d">
     <Window.SystemBackdrop>
@@ -53,5 +54,26 @@
             </NavigationView.MenuItems>
             <Frame x:Name="NavFrame" />
         </NavigationView>
+
+        <!-- System-tray icon (H.NotifyIcon): ALWAYS present — the restore entry
+             (requirement 1). Left-click restores (PingApp parity, NoLeftClickDelay);
+             right-click opens the Show/Exit menu. H.NotifyIcon builds a Win32
+             PopupMenu from the ContextFlyout MenuFlyout and invokes each item's
+             Command (wired in the code-behind). It self-unregisters on window
+             close. The WINDOW (taskbar button) — not this icon — is what
+             minimize-to-tray hides via SW_HIDE. -->
+        <tb:TaskbarIcon
+            x:Name="TrayIcon"
+            ToolTipText="SysPwrMon"
+            IconSource="Assets/AppIcon.ico"
+            NoLeftClickDelay="True">
+            <tb:TaskbarIcon.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem x:Name="TrayShowItem" Text="Show" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem x:Name="TrayExitItem" Text="Exit" />
+                </MenuFlyout>
+            </tb:TaskbarIcon.ContextFlyout>
+        </tb:TaskbarIcon>
     </Grid>
 </Window>
