@@ -36,7 +36,6 @@ public sealed class LibreHardwareMonitorSource : ITelemetrySource
     private const string CpuPackagePowerName = "CPU Package";
     private const string GpuCoreLoadName = "GPU Core";
     private const string GpuPackagePowerName = "GPU Package";
-    private const string GpuPowerLoadName = "GPU Power"; // load-% on some vendors; not watts
     private const string GpuMemoryLoadName = "GPU Memory";
     private const string GpuMemoryUsedName = "GPU Memory Used";
     private const string GpuMemoryFreeName = "GPU Memory Free";
@@ -151,7 +150,7 @@ public sealed class LibreHardwareMonitorSource : ITelemetrySource
 
             double? corePower = null;
             if (Nvml.nvmlDeviceGetPowerUsage(handle, out var watts) == Nvml.Success)
-                corePower = watts / 1000;
+                corePower = (double)watts / 1000;
 
             gpus[i] = new GpuSampleData(cardName, coreLoad, corePower, vramUsed, vramFree, vramMax, vramLoad);
         }
