@@ -11,7 +11,23 @@
     <PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
-    <EnableMsixTooling>true</EnableMsixTooling>
+    <EnableMsixTooling>false</EnableMsixTooling>
+    <!--
+      Run UNPACKAGED. "CPU Package" power is Intel RAPL, read through the PawIO
+      kernel driver whose device node is admin-only. A packaged/Store app cannot
+      request elevation (the manifest's requireAdministrator is vetoed with
+      "The request is not supported"), so the app must run as a loose EXE and let
+      the Win32 app.manifest's requireAdministrator apply.
+        WindowsPackageType=None  -> build a loose EXE, no MSIX.
+        EnableWinAppRunSupport=false -> stop the winapp CLI from registering a
+          debug AUMID and launching via package identity (the "Unable to activate
+          Windows Store app" failure). This is the opt-out the WinApp package doc
+          names; the package reference stays but inert.
+        EnableMsixTooling=false -> disable the MSIX build tools / Package-and-Publish
+          menu so the build never attempts to package an unpackaged app.
+    -->
+    <WindowsPackageType>None</WindowsPackageType>
+    <EnableWinAppRunSupport>false</EnableWinAppRunSupport>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
