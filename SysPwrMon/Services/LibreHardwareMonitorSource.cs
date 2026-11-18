@@ -1,6 +1,6 @@
-using System.Text;
 using LibreHardwareMonitor.Hardware;
 using SysPwrMon.Models;
+using System.Text;
 
 namespace SysPwrMon.Services;
 

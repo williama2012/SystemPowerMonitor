@@ -6,8 +6,6 @@ namespace SysPwrMon.Converters;
 
 public sealed class LoadToColorConverter : IValueConverter
 {
-
-
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is double progress)
@@ -17,7 +15,7 @@ public sealed class LoadToColorConverter : IValueConverter
 
             byte g = ratio < 0.5 ? (byte)255 : (byte)(255 * (1 - (ratio - 0.5) * 2));
             byte r = ratio < 0.5 ? (byte)(255 * (ratio * 2)) : (byte)200;
-            
+
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, r, g, 0));
         }
         return new SolidColorBrush(Colors.DodgerBlue);

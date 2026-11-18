@@ -1,6 +1,6 @@
-using System.Threading.Channels;
 using MongoDB.Driver;
 using SysPwrMon.Models;
+using System.Threading.Channels;
 
 namespace SysPwrMon.Services;
 

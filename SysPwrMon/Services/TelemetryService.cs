@@ -1,4 +1,3 @@
-using System.Threading;
 using SysPwrMon.Models;
 
 namespace SysPwrMon.Services;

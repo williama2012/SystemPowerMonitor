@@ -1,9 +1,9 @@
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SysPwrMon.Models;
 using SysPwrMon.Services;
-using Microsoft.UI.Xaml.Controls;
 
 namespace SysPwrMon.Pages;
 
