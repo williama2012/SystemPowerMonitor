@@ -53,7 +53,7 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Style="{StaticResource BodyTextBlockStyle}"
-                        Text="1000 W" />
+                        Text="0 W" />
                 </Grid>
             </Border>
             <!-- CPU: DataContext bound to the stable CpuTelemetry; the
@@ -76,16 +76,27 @@
                     <TextBlock
                         Grid.Row="1"
                         Style="{StaticResource BodyTextBlockStyle}"
-                        Text="Load" />
-                    <TextBlock
+                        Text="CPU Load" />
+                    <!-- Load value + display-only bar: same bound value, 0-100 scale.
+                         ProgressBar needs Maximum=100: the WinUI 3 default is 10. -->
+                    <StackPanel
                         Grid.Row="1"
                         Grid.Column="1"
-                        Style="{StaticResource BodyTextBlockStyle}"
-                        Text="{Binding Load, Converter={StaticResource PercentValueConverter}}" />
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <TextBlock
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="{Binding Load, Converter={StaticResource PercentValueConverter}}" />
+                        <ProgressBar
+                            Width="120"
+                            VerticalAlignment="Center"
+                            Maximum="100"
+                            Value="{Binding Load}" />
+                    </StackPanel>
                     <TextBlock
                         Grid.Row="2"
                         Style="{StaticResource BodyTextBlockStyle}"
-                        Text="Power" />
+                        Text="CPU Power" />
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="1"
@@ -123,11 +134,21 @@
                                     Grid.Row="1"
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="Core Load" />
-                                <TextBlock
+                                <!-- Core load value + display-only bar (same bound value). -->
+                                <StackPanel
                                     Grid.Row="1"
                                     Grid.Column="1"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{Binding CoreLoad, Converter={StaticResource PercentValueConverter}}" />
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                                    <TextBlock
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{Binding CoreLoad, Converter={StaticResource PercentValueConverter}}" />
+                                    <ProgressBar
+                                        Width="120"
+                                        VerticalAlignment="Center"
+                                        Maximum="100"
+                                        Value="{Binding CoreLoad}" />
+                                </StackPanel>
                                 <TextBlock
                                     Grid.Row="1"
                                     Grid.Column="2"
@@ -161,11 +182,21 @@
                                     Grid.Row="3"
                                     Style="{StaticResource BodyTextBlockStyle}"
                                     Text="VRAM Load" />
-                                <TextBlock
+                                <!-- VRAM load value + display-only bar (same bound value). -->
+                                <StackPanel
                                     Grid.Row="3"
                                     Grid.Column="1"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{Binding VramLoad, Converter={StaticResource PercentValueConverter}}" />
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                                    <TextBlock
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{Binding VramLoad, Converter={StaticResource PercentValueConverter}}" />
+                                    <ProgressBar
+                                        Width="120"
+                                        VerticalAlignment="Center"
+                                        Maximum="100"
+                                        Value="{Binding VramLoad}" />
+                                </StackPanel>
                                 <TextBlock
                                     Grid.Row="3"
                                     Grid.Column="2"
