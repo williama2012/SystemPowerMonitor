@@ -12,8 +12,13 @@
         <converters:PercentValueConverter x:Key="PercentValueConverter" />
         <converters:WattValueConverter x:Key="WattValueConverter" />
         <converters:MebibyteValueConverter x:Key="MebibyteValueConverter" />
+        <Style x:Key="LoadBarStyle" TargetType="ProgressBar">
+            <Setter Property="MinHeight" Value="16" />
+            <Setter Property="Width" Value="120" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Maximum" Value="100" />
+        </Style>
     </Page.Resources>
-
     <ScrollViewer Padding="24,16,24,16">
         <StackPanel Spacing="16">
 
@@ -92,9 +97,7 @@
                             Style="{StaticResource BodyTextBlockStyle}"
                             Text="{Binding Load, Converter={StaticResource PercentValueConverter}}" />
                         <ProgressBar
-                            Width="120"
-                            VerticalAlignment="Center"
-                            Maximum="100"
+                            Style="{StaticResource LoadBarStyle}"
                             Value="{Binding Load}" />
                     </StackPanel>
                     <TextBlock
@@ -152,9 +155,7 @@
                                         Style="{StaticResource BodyTextBlockStyle}"
                                         Text="{Binding CoreLoad, Converter={StaticResource PercentValueConverter}}" />
                                     <ProgressBar
-                                        Width="120"
-                                        VerticalAlignment="Center"
-                                        Maximum="100"
+                                        Style="{StaticResource LoadBarStyle}"
                                         Value="{Binding CoreLoad}" />
                                 </StackPanel>
                                 <TextBlock
@@ -200,9 +201,7 @@
                                         Style="{StaticResource BodyTextBlockStyle}"
                                         Text="{Binding VramLoad, Converter={StaticResource PercentValueConverter}}" />
                                     <ProgressBar
-                                        Width="120"
-                                        VerticalAlignment="Center"
-                                        Maximum="100"
+                                        Style="{StaticResource LoadBarStyle}"
                                         Value="{Binding VramLoad}" />
                                 </StackPanel>
                                 <TextBlock
