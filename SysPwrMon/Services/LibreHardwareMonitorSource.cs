@@ -115,11 +115,10 @@ public sealed class LibreHardwareMonitorSource : ITelemetrySource
     /// <summary>
     /// NVML is the primary GPU source: values match nvidia-smi and report
     /// per-adapter memory correctly on multi-GPU systems.
-    /// TENSION (do not conflate): VramLoad is "VRAM in use" = used/total, matching
-    /// LHM's "GPU Memory" load sensor. NVML's memory-utilization rate (the
-    /// second out of nvmlDeviceGetUtilizationRates) is a *controller busyness*
-    /// percentage — a different metric — so VramLoad is computed from the memory
-    /// figures, not the utilization call.
+    /// VramLoad is the memory-controller utilization rate — the second out of
+    /// nvmlDeviceGetUtilizationRates — the same figure nvidia-smi reports as
+    /// MEM-Util. It is deliberately NOT VRAM occupancy (used/total): that
+    /// percentage is a different metric and was never the spec.
     /// </summary>
     private GpuSampleData[] ReadGpusNvml()
     {
@@ -135,18 +134,32 @@ public sealed class LibreHardwareMonitorSource : ITelemetrySource
                 ? name.ToString()
                 : string.Empty;
 
-            double? vramUsed = null, vramFree = null, vramMax = null, vramLoad = null;
+            double? vramUsed = null, vramFree = null, vramMax = null;
             if (Nvml.nvmlDeviceGetMemoryInfo(handle, out var mem) == Nvml.Success)
             {
                 vramUsed = ToMebibytes(mem.used);
                 vramFree = ToMebibytes(mem.free);
                 vramMax = ToMebibytes(mem.total);
-                vramLoad = mem.total > 0 ? mem.used / (double)mem.total * 100.0 : null;
             }
 
-            double? coreLoad = null;
-            if (Nvml.nvmlDeviceGetUtilizationRates(handle, out var core, out _) == Nvml.Success)
+            // VramLoad is the utilization rate, not occupancy: the second out of
+            // nvmlDeviceGetUtilizationRates (same figure nvidia-smi shows as
+            // MEM-Util). When it reports 0 — a known Windows/GeForce quirk — the
+            // sample call below is the *same* value: nvidia-smi sources MEM-Util
+            // from NVML_SAMPLING_TYPE_UTILITY_MEMORY.
+            double? coreLoad = null, vramLoad = null;
+            if (Nvml.nvmlDeviceGetUtilizationRates(handle, out var core, out var vram) == Nvml.Success)
+            {
                 coreLoad = core;
+                vramLoad = vram;
+                if (vram == 0)
+                {
+                    ulong lastSeen = 0;
+                    uint valType = 0, sampleCount = 1;
+                    if (Nvml.nvmlDeviceGetSamples(handle, Nvml.SamplingTypeUtilityMemory, ref lastSeen, ref valType, ref sampleCount, out var memSample) == Nvml.Success)
+                        vramLoad = memSample.sampleValue;
+                }
+            }
 
             double? corePower = null;
             if (Nvml.nvmlDeviceGetPowerUsage(handle, out var watts) == Nvml.Success)
