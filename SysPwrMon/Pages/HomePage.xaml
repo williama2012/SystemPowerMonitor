@@ -170,22 +170,22 @@
                                 <TextBlock
                                     Grid.Row="2"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="VRAM Used" />
+                                    Text="VRAM Free" />
                                 <TextBlock
                                     Grid.Row="2"
                                     Grid.Column="1"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{Binding VramUsedMiB, Converter={StaticResource MebibyteValueConverter}}" />
+                                    Text="{Binding VramFreeMiB, Converter={StaticResource MebibyteValueConverter}}" />
                                 <TextBlock
                                     Grid.Row="2"
                                     Grid.Column="2"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="VRAM Free" />
+                                    Text="VRAM Used" />
                                 <TextBlock
                                     Grid.Row="2"
                                     Grid.Column="3"
                                     Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{Binding VramFreeMiB, Converter={StaticResource MebibyteValueConverter}}" />
+                                    Text="{Binding VramUsedMiB, Converter={StaticResource MebibyteValueConverter}}" />
                                 <TextBlock
                                     Grid.Row="3"
                                     Style="{StaticResource BodyTextBlockStyle}"
