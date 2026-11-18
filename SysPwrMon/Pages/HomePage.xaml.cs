@@ -96,6 +96,9 @@ public sealed partial class HomePage : Page
                 ? _telemetry.Status
                 : $"{_telemetry.Status} — {_telemetry.LastError}";
 
+            var totalPower = sample.CpuPower;
+            totalPower += _gpus.Select(g => g.CorePower).Where(p => p.HasValue).Select(p => p.Value).Sum();
+            SystemTotalPower.Text = $"{totalPower:0.#} W";
         }
         catch (Exception ex)
         {

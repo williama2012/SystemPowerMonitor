@@ -33,7 +33,29 @@
                     Text=""
                     VerticalAlignment="Center" />
             </StackPanel>
-
+            <Border Padding="16">
+                <Grid ColumnSpacing="16" RowSpacing="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="1"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="Total Load" />
+                    <TextBlock
+                        x:Name="SystemTotalPower"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="1000 W" />
+                </Grid>
+            </Border>
             <!-- CPU: DataContext bound to the stable CpuTelemetry; the
                  timer thread mutates it, bindings pick up the values. -->
             <Border x:Name="CpuCard" Padding="16">
