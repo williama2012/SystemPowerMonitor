@@ -1,12 +1,6 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using Microsoft.UI.Xaml.Data;
-using System.Drawing;
 
 namespace SysPwrMon.Converters;
 
