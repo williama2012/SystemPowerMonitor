@@ -226,7 +226,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-
         </StackPanel>
     </ScrollViewer>
 </Page>
