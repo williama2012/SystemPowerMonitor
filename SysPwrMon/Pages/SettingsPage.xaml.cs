@@ -38,11 +38,17 @@ public sealed partial class SettingsPage : Page
 
     private void OnSave(object sender, RoutedEventArgs e)
     {
-        var settings = new AppSettings(
-            MongoUriTextBox.Text.Trim(),
-            DatabaseNameTextBox.Text.Trim(),
-            CollectionNameTextBox.Text.Trim(),
-            MinimizeToTrayCheckBox.IsChecked == true);
+        // Load-modify-save: the page only owns the Mongo fields + the tray
+        // toggle; WindowBounds lives in the same record and must survive a
+        // settings save (a fresh record would null it and the store would
+        // delete the value).
+        var settings = _store.Load() with
+        {
+            MongoUri = MongoUriTextBox.Text.Trim(),
+            DatabaseName = DatabaseNameTextBox.Text.Trim(),
+            CollectionName = CollectionNameTextBox.Text.Trim(),
+            MinimizeToTray = MinimizeToTrayCheckBox.IsChecked == true
+        };
 
         if (!settings.IsComplete)
         {

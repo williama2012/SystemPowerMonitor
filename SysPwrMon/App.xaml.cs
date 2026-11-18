@@ -61,7 +61,33 @@ namespace SysPwrMon
             WindowIcon.SetWindowIcon(
                 WindowNative.GetWindowHandle(_window),
                 Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico"));
+
+            // Window bounds: restore the user's last layout if one was saved
+            // on a previous close; otherwise the first-run default. The save
+            // reads AppWindow.Position/Size, the restore uses MoveAndResize —
+            // a same-units round trip, so DPI scaling stays WinUI's.
+            var savedBounds = SettingsStore.Load().WindowBounds;
+            var bounds = savedBounds is { IsRestorable: true }
+                ? savedBounds
+                : DefaultWindowBounds;
+            _window.AppWindow.MoveAndResize(
+                new Windows.Graphics.RectInt32(bounds.X, bounds.Y, bounds.Width, bounds.Height));
         }
+
+        /// First-run window bounds — used until the first close has saved a
+        /// layout. (MoveAndResize runs every launch; the OS never persists a
+        /// window's own placement, so without the saved value the window
+        /// would open here on every run.)
+        private static readonly WindowBounds DefaultWindowBounds = new(0, 0, 600, 400);
+
+        /// Persist the window's current bounds (called on window close).
+        /// Load-modify-save through the same store the pages write: one Save
+        /// carries the whole settings set, so no field is lost.
+        public void SaveWindowBounds(Windows.Graphics.PointInt32 position, Windows.Graphics.SizeInt32 size)
+            => SettingsStore.Save(SettingsStore.Load() with
+            {
+                WindowBounds = new WindowBounds(position.X, position.Y, size.Width, size.Height)
+            });
 
         /// <summary>
         /// Window minimize/maximize changes the UI policy, not the data

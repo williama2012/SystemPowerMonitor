@@ -15,6 +15,7 @@ public sealed class RegistrySettingsStore : ISettingsStore
     private const string DatabaseValueName = "DatabaseName";
     private const string CollectionValueName = "CollectionName";
     private const string MinimizeToTrayValueName = "MinimizeToTray";
+    private const string WindowBoundsValueName = "WindowBounds";
 
     public AppSettings Load()
     {
@@ -27,7 +28,8 @@ public sealed class RegistrySettingsStore : ISettingsStore
                 Read(key, UriValueName),
                 Read(key, DatabaseValueName),
                 Read(key, CollectionValueName),
-                ReadBool(key, MinimizeToTrayValueName));
+                ReadBool(key, MinimizeToTrayValueName),
+                ReadBounds(key, WindowBoundsValueName));
     }
 
     public void Save(AppSettings settings)
@@ -37,6 +39,7 @@ public sealed class RegistrySettingsStore : ISettingsStore
         Write(key, DatabaseValueName, settings.DatabaseName);
         Write(key, CollectionValueName, settings.CollectionName);
         WriteBool(key, MinimizeToTrayValueName, settings.MinimizeToTray);
+        WriteBounds(key, WindowBoundsValueName, settings.WindowBounds);
     }
 
     private static string? Read(RegistryKey key, string name)
@@ -62,5 +65,33 @@ public sealed class RegistrySettingsStore : ISettingsStore
             key.SetValue(name, 1, RegistryValueKind.DWord);
         else
             key.DeleteValue(name, throwOnMissingValue: false);
+    }
+
+    // Window bounds as "x,y,w,h" in one value: atomic, so a crash can't
+    // leave a half-old window. Unparseable == "not saved" (the app must
+    // launch, and the next close rewrites the value) — the same absent-
+    // default policy as the string values above.
+    private static WindowBounds? ReadBounds(RegistryKey key, string name)
+    {
+        var raw = key.GetValue(name) as string;
+        if (raw is null)
+            return null;
+
+        var parts = raw.Split(',');
+        return parts.Length is 4
+            && int.TryParse(parts[0], out var x)
+            && int.TryParse(parts[1], out var y)
+            && int.TryParse(parts[2], out var w)
+            && int.TryParse(parts[3], out var h)
+            ? new WindowBounds(x, y, w, h)
+            : null;
+    }
+
+    private static void WriteBounds(RegistryKey key, string name, WindowBounds? bounds)
+    {
+        if (bounds is null)
+            key.DeleteValue(name, throwOnMissingValue: false);
+        else
+            key.SetValue(name, $"{bounds.X},{bounds.Y},{bounds.Width},{bounds.Height}");
     }
 }

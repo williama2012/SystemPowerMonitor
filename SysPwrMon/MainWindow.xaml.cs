@@ -40,6 +40,7 @@ namespace SysPwrMon
             AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
             AppWindow.SetIcon("Assets/AppIcon.ico");
             Activated += OnActivated;
+            AppWindow.Closing += OnAppWindowClosing;
         }
 
         // The requirement: no UI updates while minimized, sampling/logging
@@ -65,6 +66,15 @@ namespace SysPwrMon
                 HideToTray();
 
             app.SetUiSuspended(IsMinimized() || _hiddenToTray);
+        }
+
+        // Persist the window's bounds on a real close. The tray tuck path
+        // (HideToTray, SW_HIDE) is NOT a close, so it never fires here — a
+        // tucked window keeps its spot, and only the close path persists.
+        private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
+        {
+            if (Application.Current is App app)
+                app.SaveWindowBounds(AppWindow.Position, AppWindow.Size);
         }
 
         // Tuck into the tray: hide the HWND (removes the taskbar button) and
