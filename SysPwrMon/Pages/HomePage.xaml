@@ -58,19 +58,23 @@
             </Border>
             <!-- CPU: DataContext bound to the stable CpuTelemetry; the
                  timer thread mutates it, bindings pick up the values. -->
+            <!-- Column widths (100, *, 100, *) MUST match the GPU cards' grid:
+                 the grids are independent, so Auto label columns would size to
+                 each card's own widest label and drift across cards. -->
             <Border x:Name="CpuCard" Padding="16">
                 <Grid ColumnSpacing="16" RowSpacing="4">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBlock
-                        Grid.ColumnSpan="2"
+                        Grid.ColumnSpan="4"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="{Binding Name}" />
                     <TextBlock
@@ -94,12 +98,13 @@
                             Value="{Binding Load}" />
                     </StackPanel>
                     <TextBlock
-                        Grid.Row="2"
+                        Grid.Row="1"
+                        Grid.Column="2"
                         Style="{StaticResource BodyTextBlockStyle}"
                         Text="CPU Power" />
                     <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="1"
+                        Grid.Row="1"
+                        Grid.Column="3"
                         Style="{StaticResource BodyTextBlockStyle}"
                         Text="{Binding Power, Converter={StaticResource WattValueConverter}}" />
                 </Grid>
@@ -114,10 +119,13 @@
                             Padding="16"
                             Margin="0,0,0,16">
                             <Grid ColumnSpacing="16" RowSpacing="4">
+                                <!-- Label columns fixed at 100 to match the CPU
+                                     card: Auto would drift across the independent
+                                     grids (see CpuCard comment). -->
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="100" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="100" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
