@@ -13,7 +13,7 @@
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>false</EnableMsixTooling>
     <!--
-      Run UNPACKAGED. "CPU Package" power is Intel RAPL, read through the PawIO
+      Run UNPACKAGED. "CPU Package" power is Intel RAPL, read through the PawnIO
       kernel driver whose device node is admin-only. A packaged/Store app cannot
       request elevation (the manifest's requireAdministrator is vetoed with
       "The request is not supported"), so the app must run as a loose EXE and let

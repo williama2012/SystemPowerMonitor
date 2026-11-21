@@ -6,7 +6,7 @@ namespace SysPwrMon.Services;
 
 /// Hardware source of truth.
 ///
-/// CPU is always LibreHardwareMonitor (RAPL package power via PawIO, CPU
+/// CPU is always LibreHardwareMonitor (RAPL package power via PawnIO, CPU
 /// total load). GPUs come from direct NVML first, with LibreHardwareMonitor as
 /// the fallback: LHM's NVML wrapper mis-attributes per-adapter memory on
 /// multi-GPU systems (both adapters can read one shared memory block), so when
